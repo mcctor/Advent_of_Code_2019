@@ -15,8 +15,8 @@ fn main() {
 
 fn calculate_sum_of_fuel(module_masses: &[f64], f: &dyn Fn(f64) -> f64) -> f64 {
     let mut sum = 0.0;
-    for mass in module_masses.iter() {
-        sum += f(*mass);
+    for &mass in module_masses.iter() {
+        sum += f(mass);
     }
     sum
 }
@@ -40,7 +40,7 @@ fn convert_input_to_vector(file_contents: String) -> Vec<f64> {
     let str_vec: Vec<&str> = file_contents.split('\n').collect();
     let mut num_vec = Vec::<f64>::new();
 
-    for number in str_vec.iter() {
+    for &number in str_vec.iter() {
         num_vec.push(
             number
                 .parse::<f64>()

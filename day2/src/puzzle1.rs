@@ -14,6 +14,10 @@ enum Computation {
     Failed,
 }
 
+pub fn restore_gravity_assist(list: &mut [u32]) {
+    intcode_machine_input(list, 12, 2);
+}
+
 pub fn intcode_machine_input(intcode: &mut [u32], noun: u32, verb: u32) {
     let frst_pos = 1;
     let snd_pos = 2;
@@ -23,14 +27,10 @@ pub fn intcode_machine_input(intcode: &mut [u32], noun: u32, verb: u32) {
     intcode[snd_pos] = verb;
 }
 
-pub fn restore_gravity_assist(list: &mut [u32]) {
-    intcode_machine_input(list, 12, 2);
-}
-
 pub fn run_computation(list: &mut [u32]) {
     let mut cur_pos = 0;
     loop {
-        match opcode_computation(list, cur_pos) {
+        match intcode_computation(list, cur_pos) {
             Some(Computation::Completed) => break,
             Some(Computation::Failed) => panic!("Opcode not recognized"),
             Some(Computation::Success) => {
@@ -43,7 +43,7 @@ pub fn run_computation(list: &mut [u32]) {
     }
 }
 
-fn opcode_computation(list: &mut [u32], cur_pos: usize) -> Option<Computation> {
+fn intcode_computation(list: &mut [u32], cur_pos: usize) -> Option<Computation> {
     // Operand positions
     let first_operand_pos = cur_pos + NEXT_POS;
     let second_operand_pos = first_operand_pos + NEXT_POS;

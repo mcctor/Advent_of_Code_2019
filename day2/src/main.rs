@@ -9,7 +9,6 @@ fn main() {
 }
 
 fn puzzle_1() {
-    // puzzle one solution
     let mut op_code_list = puzzle1::get_operation_code_list();
     puzzle1::restore_gravity_assist(&mut op_code_list);
     puzzle1::run_computation(&mut op_code_list);
@@ -17,8 +16,8 @@ fn puzzle_1() {
 }
 
 fn puzzle_2() {
-    let puzzle2_solution = |noun, verb| (100 * noun) + verb;
     let expected_result = 19690720;
+    let puzzle2_solution = |noun, verb| (100 * noun) + verb;
     let mut op_code_list = puzzle1::get_operation_code_list();
 
     let now = Instant::now();

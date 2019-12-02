@@ -1,13 +1,13 @@
 use std::fs::File;
 use std::io::Read;
 
-const NEXT_POS: usize = 1;
-const INSTR_SIZE: usize = 4;
-
 // OPCODES DECLARATIONS
 const EXIT_OPCODE: u32 = 99;
 const MULT_OPCODE: u32 = 2;
 const ADD_OPCODE: u32 = 1;
+
+const NEXT_POS: usize = 1;
+const INSTR_SIZE: usize = 4;
 
 enum Computation {
     Success,

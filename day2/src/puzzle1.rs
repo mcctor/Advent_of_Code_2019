@@ -14,14 +14,17 @@ enum Computation {
     Failed,
 }
 
-pub fn restore_gravity_assist(list: &mut [u32]) {
+pub fn intcode_machine_input(intcode: &mut [u32], noun: u32, verb: u32) {
     let frst_pos = 1;
     let snd_pos = 2;
 
-    // replace the positions with given values
-    // to restore it to its original state as the problem demands.
-    list[frst_pos] = 12;
-    list[snd_pos] = 2;
+    // replace values at positions with noun and verb
+    intcode[frst_pos] = noun;
+    intcode[snd_pos] = verb;
+}
+
+pub fn restore_gravity_assist(list: &mut [u32]) {
+    intcode_machine_input(list, 12, 2);
 }
 
 pub fn run_computation(list: &mut [u32]) {

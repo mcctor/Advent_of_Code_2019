@@ -8,14 +8,14 @@ const LEFT_INSTR: u8 = b'L';
 const RIGHT_INSTR: u8 = b'R';
 
 #[derive(Debug)]
-pub struct Position {
+struct Position {
     row: i32,
     column: i32,
     pub history: Vec<(i32, i32)>,
 }
 
 impl Position {
-    pub fn new() -> Position {
+    fn new() -> Position {
         Position {
             row: 0,
             column: 0,
@@ -23,7 +23,7 @@ impl Position {
         }
     }
 
-    pub fn process_instruction(&mut self, instr: &str) {
+    fn process_instruction(&mut self, instr: &str) {
         let (instr_char, steps) = instr.split_at(1);
         let instr_char = instr_char.as_bytes()[0];
         let steps = steps.parse::<i32>().unwrap();
@@ -118,7 +118,7 @@ fn process_instr_for_line(line: &mut Position, instr: Vec<&str>) {
     }
 }
 
-pub fn mov_instr_to_vec(file_contents: &String) -> (Vec<&str>, Vec<&str>) {
+fn mov_instr_to_vec(file_contents: &String) -> (Vec<&str>, Vec<&str>) {
     let instr_vec: Vec<&str> = file_contents.split("\n").collect();
 
     let frst_line_vec = instr_vec[0].split(",").collect::<Vec<&str>>();
@@ -127,7 +127,7 @@ pub fn mov_instr_to_vec(file_contents: &String) -> (Vec<&str>, Vec<&str>) {
     (frst_line_vec, snd_line_vec)
 }
 
-pub fn read_mov_instr_from_file() -> String {
+fn read_mov_instr_from_file() -> String {
     let mut file = File::open("movement_instructions.txt")
         .expect("Could not open/find file.");
 

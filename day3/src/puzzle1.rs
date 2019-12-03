@@ -9,15 +9,22 @@ const LEFT_INSTR: u8 = b'L';
 const RIGHT_INSTR: u8 = b'R';
 
 #[derive(Debug)]
-struct Position {
+pub struct CrossingPoint {
+    pub x: i32,
+    pub y: i32,
+    pub steps_to: i32,
+}
+
+#[derive(Debug)]
+pub struct Position {
     row: i32,
     column: i32,
-    pub history: Vec<(i32, i32, i32)>,
-    tot_steps: i32
+    history: Vec<Box<CrossingPoint>>,
+    tot_steps: i32,
 }
 
 impl Position {
-    fn new() -> Position {
+    pub fn new() -> Position {
         Position {
             row: 0,
             column: 0,
@@ -49,7 +56,12 @@ impl Position {
     }
 
     fn record_history(&mut self, coordinates: (i32, i32, i32)) {
-        self.history.push(coordinates);
+        let crossing_point = CrossingPoint {
+            x: coordinates.0,
+            y: coordinates.1,
+            steps_to: coordinates.2,
+        };
+        self.history.push(Box::new(crossing_point));
     }
 
     fn move_left(&mut self, steps: i32) -> (i32, i32) {
@@ -90,25 +102,22 @@ impl Position {
 }
 
 
-pub fn run_instructions() -> HashMap<String, Vec<(i32, i32, i32)>> {
-    let mut line1 = Position::new();
-    let mut line2 = Position::new();
-
+pub fn run_instructions<'a>(line1: &'a mut Position, line2: &'a mut Position) -> HashMap<String, Vec<&'a Box<CrossingPoint>>> {
     let instructions = read_mov_instr_from_file();
     let (line1_instr, line2_instr) = mov_instr_to_vec(&instructions);
 
-    process_instr_for_line(&mut line1, line1_instr);
-    process_instr_for_line(&mut line2, line2_instr);
+    process_instr_for_line(line1, line1_instr);
+    process_instr_for_line(line2, line2_instr);
 
-    find_crossing_points(&mut line1, &mut line2)
+    find_crossing_points(line1, line2)
 }
 
-fn find_crossing_points(line1: &mut Position, line2: &mut Position) -> HashMap<String, Vec<(i32, i32, i32)>> {
+fn find_crossing_points<'a>(line1: &'a mut Position, line2: &'a mut Position) -> HashMap<String, Vec<&'a Box<CrossingPoint>>> {
     let mut crossing_points = HashMap::new();
-    let mut crossing_points_line1: Vec<(i32, i32, i32)> = Vec::new();
-    let mut crossing_points_line2: Vec<(i32, i32, i32)> = Vec::new();
-    for &line1_coord in line1.history.iter() {
-        for &line2_coord in line2.history.iter() {
+    let mut crossing_points_line1 = Vec::new();
+    let mut crossing_points_line2 = Vec::new();
+    for line1_coord in &line1.history {
+        for line2_coord in line2.history.iter() {
             if is_crossing_point_for(line1_coord, line2_coord) {
                 crossing_points_line1.push(line1_coord);
                 crossing_points_line2.push(line2_coord);
@@ -120,8 +129,8 @@ fn find_crossing_points(line1: &mut Position, line2: &mut Position) -> HashMap<S
     crossing_points
 }
 
-fn is_crossing_point_for(line1: (i32, i32, i32), line2: (i32, i32, i32)) -> bool {
-    (line1.0 == line2.0) && (line1.1 == line2.1)
+fn is_crossing_point_for(line1: &Box<CrossingPoint>, line2: &Box<CrossingPoint>) -> bool {
+    (line1.x == line2.x) && (line1.y == line2.y)
 }
 
 fn process_instr_for_line(line: &mut Position, instr: Vec<&str>) {
@@ -149,18 +158,17 @@ fn read_mov_instr_from_file() -> String {
     file_contents
 }
 
-pub fn calc_manhattan_distances(points: &[(i32, i32, i32)]) -> Vec<f64> {
-    let origin = points[0];
+pub fn calc_manhattan_distances(points: &[&Box<CrossingPoint>]) -> Vec<f64> {
+    let origin = points.get(0).unwrap();
 
     let mut manhattan_distances = vec![];
     for &point in points.iter() {
         let distance = {
-            ((point.0 as f64).abs() - (origin.0 as f64).abs()) +
-                ((point.1 as f64).abs() - (origin.1 as f64).abs())
+            ((point.x as f64).abs() - (origin.x as f64).abs()) +
+                ((point.y as f64).abs() - (origin.y as f64).abs())
         };
         manhattan_distances.push(distance);
     }
-
     manhattan_distances
 }
 

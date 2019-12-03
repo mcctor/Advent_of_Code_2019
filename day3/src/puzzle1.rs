@@ -101,7 +101,6 @@ impl Position {
     }
 }
 
-
 pub fn run_instructions<'a>(line1: &'a mut Position, line2: &'a mut Position) -> HashMap<String, Vec<&'a Box<CrossingPoint>>> {
     let instructions = read_mov_instr_from_file();
     let (line1_instr, line2_instr) = mov_instr_to_vec(&instructions);
@@ -117,7 +116,7 @@ fn find_crossing_points<'a>(line1: &'a mut Position, line2: &'a mut Position) ->
     let mut crossing_points_line1 = Vec::new();
     let mut crossing_points_line2 = Vec::new();
     for line1_coord in &line1.history {
-        for line2_coord in line2.history.iter() {
+        for line2_coord in &line2.history {
             if is_crossing_point_for(line1_coord, line2_coord) {
                 crossing_points_line1.push(line1_coord);
                 crossing_points_line2.push(line2_coord);

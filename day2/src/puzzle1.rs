@@ -35,7 +35,7 @@ pub fn run_computation(list: &mut [u32]) {
             Some(Computation::Success) => instr_ptr += INSTR_SIZE,
             Some(Computation::Failed) => panic!("Opcode not recognized."),
             Some(Computation::Completed) => break,
-            _ => panic!("Pretty much sure something went wrong here.")
+            None => panic!("Pretty much sure something went wrong here.")
         }
     }
 }
@@ -48,7 +48,7 @@ fn intcode_computation(list: &mut [u32], cur_pos: usize) -> Option<Computation> 
 
     let opcode = match list.get(cur_pos) {
         Some(num) => *num,
-        None => panic!("Couldn't find number at given index.")
+        None => { return None; }
     };
 
     match opcode {
